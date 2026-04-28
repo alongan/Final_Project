@@ -22,6 +22,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -127,9 +162,8 @@ ul.task-list li input[type="checkbox"] {
 <li>How does abundance and diversity differ between site and transect? (2) Are there different environmental conditions that support specific species? (3) Which environmental factors lead to higher diversity? (4) Where do taxa tend to occur when they are not ubiquitous or rare?</li>
 </ol>
 </blockquote>
-</section>
-<section id="data-visualization" class="level1">
-<h1>Data Visualization</h1>
+<section id="data-visualization-plans" class="level2">
+<h2 class="anchored" data-anchor-id="data-visualization-plans">Data Visualization Plans</h2>
 <ol type="1">
 <li>What do you want your final visualizations to look like?</li>
 </ol>
@@ -137,8 +171,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><p>Violin plots with jittered points for abundance and diversity between locations and transects</p></li>
 <li><p>dodged barchart showing average values of environmental variables with a fill of presence absence for important species to compare</p></li>
-<li><p>scatterplots with model regression lines for showing relationships between environmental factors and abundance as well as presence absence</p></li>
-<li><p>additional scatterplots showing regression lines for relationships of abundance of a specific species against important environmental factors</p></li>
+<li><p>dodged barchart showing changes in diversity or abundance across sites</p></li>
 <li><p>possibly a table of values from eventual linear model output and random forest modelling output</p></li>
 </ul>
 </blockquote>
@@ -183,8 +216,8 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 </blockquote>
 </section>
-<section id="data-cleaning" class="level1">
-<h1>Data Cleaning</h1>
+<section id="data-cleaning-plans" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-plans">Data Cleaning Plans</h2>
 <ol type="1">
 <li>Do you need to reformat any variables into different types (e.g.&nbsp;factors, time, dates, strings)? Or remove information from variable values?</li>
 </ol>
@@ -245,6 +278,232 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Yes, I excluded the variables: location_coordinates, date, observers, start_time, end_time, as they weren’t important for my analysis.</p>
 </blockquote>
+</section>
+</section>
+<section id="data-cleaning-and-data-visualization" class="level1">
+<h1>Data Cleaning and Data Visualization</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vegan)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mosaic)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>macrophytes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data-raw/macrophytes_full.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>macrophytes <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(macrophytes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>macrophytes <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">calc_stem_abundance_m2 =</span> number_individuals<span class="sc">*</span><span class="fl">0.09</span>) <span class="sc">|&gt;</span> <span class="co">#may change 0.09 to a better number to accurately represent size of plants, 30 cm^2 or 0.09 m^2, seems right</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">final_abundance =</span> <span class="fu">case_when</span>(<span class="fu">is.na</span>(number_individuals) <span class="sc">~</span> cover_area_m_2, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                     number_individuals <span class="sc">&gt;=</span> <span class="dv">150</span> <span class="sc">~</span> cover_area_m_2,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">str_detect</span>(aquatic_plant_species, <span class="st">"annual grass"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="sc">!</span><span class="fu">is.na</span>(cover_area_m_2) <span class="sc">&amp;</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                                       number_individuals <span class="sc">&gt;</span> <span class="dv">5</span> <span class="sc">~</span> cover_area_m_2,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">.default =</span> calc_stem_abundance_m2</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                                     )</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="st">"data-raw/macrophytes_clean.csv"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># |&gt; </span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># select(number_individuals, calc_stem_abundance_m2, cover_area_m_2, aquatic_plant_species, total_abundance)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="additional-data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="additional-data-cleaning">Additional Data Cleaning</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>macrophytes_abun <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data-raw/macrophytes_clean.csv"</span>, <span class="at">col_select =</span> <span class="sc">-</span><span class="fu">c</span>(location_coordinates, date, observers, start_time, end_time)) <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(velocity_m_s) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">substrate_size_mm =</span> <span class="fu">as.numeric</span>(<span class="fu">case_when</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>          substrate_size_mm <span class="sc">==</span> <span class="st">"&lt;2"</span> <span class="sc">~</span> <span class="st">"1"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>          substrate_size_mm <span class="sc">==</span> <span class="st">"&gt;300"</span> <span class="sc">~</span> <span class="st">"300"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">.default =</span> substrate_size_mm</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         )),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">velocity_m_s =</span> <span class="fu">as.numeric</span>(<span class="fu">case_when</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>          velocity_m_s <span class="sc">==</span> <span class="st">"&lt;0.1"</span> <span class="sc">~</span> <span class="st">"0.05"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">.default =</span> velocity_m_s</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        )),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">depth_m =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>          depth_m <span class="sc">==</span> <span class="st">"NA"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">.default =</span> depth_m</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">rooted_v_floating =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>          emergent_submergent_or_floating <span class="sc">==</span> <span class="st">"emergent"</span> <span class="sc">~</span> <span class="st">"rooted"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>          emergent_submergent_or_floating <span class="sc">==</span> <span class="st">"submergent"</span> <span class="sc">~</span> <span class="st">"rooted"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>          emergent_submergent_or_floating <span class="sc">==</span> <span class="st">"partly emergent"</span> <span class="sc">~</span> <span class="st">"rooted"</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>          emergent_submergent_or_floating <span class="sc">==</span> <span class="st">"floating"</span> <span class="sc">~</span> <span class="st">"floating"</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="creating-abundance-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="creating-abundance-dataset">Creating Abundance Dataset</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># deciding what metric to use, mean or median for averaging all my numbers for each species, location, and bank</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(macrophytes_abun)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>macrophytes_abun <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(substrate_size_mm)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>macrophytes_abun <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(velocity_m_s)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>macrophytes_abun <span class="sc">|&gt;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(depth_m)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#creating total abundance for each species, bank, and site</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>macrophytes_abun <span class="sc">|&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquatic_plant_species, transect_location_rb_lb, location_name, rooted_v_floating, water_body, season) <span class="sc">|&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Calc_total_abundance_m2 =</span> <span class="fu">sum</span>(final_abundance), </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">canopy_cover_mean =</span> <span class="fu">mean</span>(canopy_cover_0_to_1_ratio),</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">temperature_c_mean =</span> <span class="fu">mean</span>(temperature_c),</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">p_h_mean =</span> <span class="fu">mean</span>(p_h),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>              <span class="at">conductivity_mean =</span> <span class="fu">mean</span>(conductivity_m_s_cm),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>              <span class="at">salinity_mean =</span> <span class="fu">mean</span>(salinity),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">tds_g_l_mean =</span> <span class="fu">mean</span>(tds_g_l),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">do_percent_mean =</span> <span class="fu">mean</span>(do_percent),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">do_mg_l_mean =</span> <span class="fu">mean</span>(do_mg_l),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>              <span class="at">riffle_mean =</span> <span class="fu">mean</span>(riffle),</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>              <span class="at">pool_mean =</span> <span class="fu">mean</span>(pool),</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>              <span class="at">run_mean =</span> <span class="fu">mean</span>(run),</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>              <span class="at">glide_mean =</span> <span class="fu">mean</span>(glide),</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>              <span class="at">depth_m_mean =</span> <span class="fu">mean</span>(depth_m),</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>              <span class="at">substrate_size_mm_mean =</span> <span class="fu">mean</span>(substrate_size_mm),</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>              <span class="at">velocity_m_s_mean =</span> <span class="fu">mean</span>(velocity_m_s),</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>              <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a> <span class="fu">write_csv</span>(<span class="st">"data-clean/macrophytes_corr.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="creating-presenceabsence-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="creating-presenceabsence-dataset">Creating Presence/Absence Dataset</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>presence_absence_factors <span class="ot">&lt;-</span> macrophytes_abun <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(location_name, transect_location_rb_lb, water_body, season) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">canopy_cover_mean =</span> <span class="fu">mean</span>(canopy_cover_0_to_1_ratio),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">temperature_c_mean =</span> <span class="fu">mean</span>(temperature_c),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">p_h_mean =</span> <span class="fu">mean</span>(p_h),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">conductivity_mean =</span> <span class="fu">mean</span>(conductivity_m_s_cm),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">salinity_mean =</span> <span class="fu">mean</span>(salinity),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">tds_g_l_mean =</span> <span class="fu">mean</span>(tds_g_l),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">do_percent_mean =</span> <span class="fu">mean</span>(do_percent),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">do_mg_l_mean =</span> <span class="fu">mean</span>(do_mg_l),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">riffle_mean =</span> <span class="fu">mean</span>(riffle),</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">pool_mean =</span> <span class="fu">mean</span>(pool),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">run_mean =</span> <span class="fu">mean</span>(run),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">glide_mean =</span> <span class="fu">mean</span>(glide),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="st">"factorsfor_presabs_only.csv"</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>presence_absence_matrix <span class="ot">&lt;-</span> macrophytes_abun <span class="sc">|&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location_name, transect_location_rb_lb, aquatic_plant_species) <span class="sc">|&gt;</span> <span class="co"># Keep only unique occurrences</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Present =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="co"># Add a column with value 1 for presence</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols =</span> <span class="fu">c</span>(location_name, transect_location_rb_lb),</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> aquatic_plant_species,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> Present,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="dv">0</span> <span class="co"># Automatically fills non-observed combinations with 0</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(location_name, transect_location_rb_lb), <span class="at">names_to =</span> <span class="st">"aquatic_plant_species"</span>, <span class="at">values_to =</span> <span class="st">"presence_or_not"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="st">"data-clean/presence_absence_only.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>###Calculating Diversity Indices across Sites and Creating a Table</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>macrophytes_final <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data-clean/macrophytes_corr.csv"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#between sites location only, not transect, transect has been included here</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>abundance_matrix <span class="ot">&lt;-</span> macrophytes_final <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location_name, aquatic_plant_species, Calc_total_abundance_m2) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquatic_plant_species, location_name) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Calc_total_abundance_m2 =</span> <span class="fu">sum</span>(Calc_total_abundance_m2)) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> aquatic_plant_species, <span class="at">values_from =</span> Calc_total_abundance_m2, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"location_name"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Shannon Index</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>shannon <span class="ot">&lt;-</span> <span class="fu">diversity</span>(abundance_matrix, <span class="at">index =</span> <span class="st">"shannon"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Simpson Index (Gini-Simpson: 1 - D)</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>simpson <span class="ot">&lt;-</span> <span class="fu">diversity</span>(abundance_matrix, <span class="at">index =</span> <span class="st">"simpson"</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Species Richness (S)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>richness <span class="ot">&lt;-</span> <span class="fu">specnumber</span>(abundance_matrix)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Pielou's Evenness (J)</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>evenness <span class="ot">&lt;-</span> shannon <span class="sc">/</span> <span class="fu">log</span>(richness)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>diversity_indices_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Site =</span> <span class="fu">rownames</span>(abundance_matrix),</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">Shannon =</span> shannon,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">Simpson =</span> simpson,</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">Richness =</span> richness,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">Evenness =</span> evenness</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(diversity_indices_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                               Site   Shannon   Simpson
+Cachagua Park                         Cachagua Park 0.7977849 0.4343648
+SLP Water Monitoring Site SLP Water Monitoring Site 0.8556271 0.4886364
+By Safeway Redo                     By Safeway Redo 1.0430886 0.5387567
+Creek Walk Start                   Creek Walk Start 0.6365142 0.4444444
+Rosie's Bridge                       Rosie's Bridge 1.1148414 0.6067439
+Lower Garzas (SLP)               Lower Garzas (SLP) 0.7670197 0.3368506
+Garland Ranch                         Garland Ranch 1.1158249 0.5832957
+Schulte's Bridge (redo)     Schulte's Bridge (redo) 1.3136075 0.6724798
+Tularcitos                               Tularcitos 0.3767702 0.2187500
+                          Richness  Evenness
+Cachagua Park                    4 0.5754801
+SLP Water Monitoring Site        4 0.6172045
+By Safeway Redo                  8 0.5016196
+Creek Walk Start                 2 0.9182958
+Rosie's Bridge                   5 0.6926899
+Lower Garzas (SLP)               8 0.3688585
+Garland Ranch                    5 0.6933010
+Schulte's Bridge (redo)          6 0.7331383
+Tularcitos                       2 0.5435644</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#overall indices</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Create a single 'Overall' row by summing species abundances</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>overall_abundances <span class="ot">&lt;-</span> abundance_matrix <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), sum))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Calculate indices for the Overall landscape</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>overall_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Site =</span> <span class="st">"OVERALL"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Richness =</span> <span class="fu">specnumber</span>(overall_abundances),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Shannon =</span> <span class="fu">diversity</span>(overall_abundances, <span class="at">index =</span> <span class="st">"shannon"</span>),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Simpson =</span> <span class="fu">diversity</span>(overall_abundances, <span class="at">index =</span> <span class="st">"simpson"</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Evenness =</span> <span class="fu">diversity</span>(overall_abundances) <span class="sc">/</span> <span class="fu">log</span>(<span class="fu">specnumber</span>(overall_abundances))</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Combine with your individual site results</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>final_table <span class="ot">&lt;-</span> diversity_indices_results <span class="sc">%&gt;%</span> <span class="co"># 'diversity_indices_results' is the table from the previous step</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(overall_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="barchart-showing-change-in-total-abundance-across-sites-and-species" class="level3">
+<h3 class="anchored" data-anchor-id="barchart-showing-change-in-total-abundance-across-sites-and-species">BarChart Showing change in total abundance across sites and species</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>macrophytes_final <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location_name, aquatic_plant_species, Calc_total_abundance_m2) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Calc_total_abundance_m2, <span class="at">fill =</span> aquatic_plant_species, <span class="at">y =</span> <span class="fu">fct_reorder</span>(location_name, <span class="fu">desc</span>(Calc_total_abundance_m2), <span class="at">.fun =</span> sum))) <span class="sc">+</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> <span class="co">#makes the geometry of the plot bars</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#creates the x and y axis labels</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Total Abundance"</span>, </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Location"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Aquatic Plant Species"</span>) <span class="sc">+</span>  </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="co">#This code got rid of the gray background </span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Tularcitos"</span> <span class="ot">=</span> <span class="st">"Tularcitos Creek"</span>, <span class="st">"Schulte's Bridge (redo)"</span> <span class="ot">=</span> <span class="st">"CR - Schulte's Bridge"</span>, <span class="st">"Garland Ranch"</span> <span class="ot">=</span> <span class="st">"CR - Garland Ranch"</span>, <span class="st">"By Safeway Redo"</span> <span class="ot">=</span> <span class="st">"CR - By Safeway"</span>, <span class="st">"CR - Cachagua Park"</span>, <span class="st">"Rosie's Bridge"</span> <span class="ot">=</span> <span class="st">"CR - Rosie's Bridge"</span>, <span class="st">"Lower Garzas (SLP)"</span> <span class="ot">=</span> <span class="st">"Garzas Creek"</span>, <span class="st">"SLP Water Monitoring Site"</span> <span class="ot">=</span> <span class="st">"San Clemente Creek"</span>, <span class="st">"Creek Walk Start"</span> <span class="ot">=</span> <span class="st">"Potrero Creek"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final_Project_files/figure-html/abundance-graphics-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"abundance_bar.png"</span>, <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
 </section>
 
 </main>
