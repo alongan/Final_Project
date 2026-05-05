@@ -158,18 +158,27 @@ execute:
 
 **still need to comment out the rest of my code, I commented out the major important parts so far**
 
+**need to add updated graphs and table in here and copy this into the portfolio**
+**need to make correlogram better later**
+
+**update answers to questions**
+
 ```{r}
 #| label: setup
+#| include: false
 library(tidyverse)
 library(janitor)
 library(vegan)
 library(mosaic)
 library(car)
+library(ellipse)
+library(RColorBrewer)
 ```
 
 
 ```{r}
 #| label: reading-in-data
+#| include: false
 macrophytes <- read_csv("data-raw/macrophytes_full.csv")
 macrophytes <- janitor::clean_names(macrophytes)
 ```
@@ -302,7 +311,12 @@ presence_absence_matrix <- macrophytes_abun |>
 ```{r}
 #| label: abundance-diversity-indices
 
-macrophytes_final <- read_csv("data-clean/macrophytes_corr.csv")
+macrophytes_final_original <- read_csv("data-clean/macrophytes_corr.csv")
+
+new_variables <- read_csv("newvariables_wSites.csv")
+
+macrophytes_final <- macrophytes_final_original |>
+  full_join(new_variables, by = c("location_name" = "Location_Name")) #joining GIS variables to abundance data
 
 #between sites location only, not transect, transect has been included here
 abundance_matrix <- macrophytes_final |>
@@ -373,6 +387,23 @@ macrophytes_final |>
 
 ggsave("abundance_bar.png", height = 5, width = 8)
   
+```
+
+**need to make this better later**
+### Correlogram of important variables against each other
+```{r}
+#| label: correlogram-important predictors
+ 
+cor_data <- cor(macrophytes_final[,7:22], use = "complete.obs") #specifying cor data
+ 
+# Build a Pannel of 100 colors with Rcolor Brewer
+my_colors <- brewer.pal(5, "Spectral")
+my_colors <- colorRampPalette(my_colors)(100)
+ 
+# Order the correlation matrix
+ord <- order(cor_data[1, ])
+cor_data_ord <- cor_data[ord, ord]
+plotcorr(cor_data_ord , col=my_colors[cor_data_ord*50+50] , mar=c(1,1,1,1)  )
 ```
 
 
