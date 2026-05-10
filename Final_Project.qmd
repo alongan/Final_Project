@@ -10,105 +10,51 @@ execute:
 
 # Data Description
 
-1.  Identify your data source.
+My **honors capstone data** will be used for this project. I collected this data from the spring of 2025 until the end of fall 2025. I also joined additional variables from the [EPA’s StreamCat dataset](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset) (Hill et al. 2016). Finally, mean runoff (mm), mean elevation (m), watershed area (km2), the percent base stream flow index, mean annual precipitation from 1991-2020 (mm), mean annual temperature from 1991-2020 (C°), and mean percent lithological calcium oxide (CaO) content within each watershed were downloaded from
 
-> My honors capstone data will be used for this project, that I have collected from the spring of 2025 until the end of fall 2025.
+- My collected data has 279 rows and 28 variables, 11 character variables, 15 double variables, and 2 time variables.
 
-2.  Describe your data, including variables and data types.
+- **Methods for Data Collection and variables collected:**
 
-> -   The dataset has 279 rows and 28 variables, 11 character variables, 15 double variables, and 2 time variables.
->
-> -   Methods for Data Collection and variables collected:
->
->     -   Do a 50 m transect on both sides of the river, 1 meter out from shore, recorded plants every time seen, within 1 meters of each side of the tape (overall 4 meters recorded)
->
->     -   When a stream is less than or equal to 2 meters wide, I only surveyed one transect in the middle of the river, to cover the full two meters.
->
->         -   Every time plant is found measure:
->
->             -   Depth (m)
->
->             -   Velocity (m/s)
->
->             -   Substrate size (mm)
->
->             -   Plant name and number of individuals or range/cover area on the transect
->
->         -   Measure at each transect overall:
->
->             -   canopy cover facing north, south, east, and west, and averaged over all 4, then multiplied by 4 and divided by product of 17\*4 (freshwater ecology standard)
->
->             -   the percentage of the 50-meter transects that are riffle, pool, run, or glide.
->
->             -   water temperature (°C)
->
->             -   pH
->
->             -   conductivity(ms/cm)
->
->             -   TDS (g/L)
->
->             -   Dissolved oxygen (mg/L) and Dissolved oxygen (%)
->
->             -   salinity
+  - Do a 50 m transect on both sides of the river, 1 meter out from shore, recorded plants every time seen, within 1 meters of each side of the tape (overall 4 meters recorded)
 
-3.  Identify the research questions you want to answer.
+  - When a stream is less than or equal to 2 meters wide, I only surveyed one transect in the middle of the river, to cover the full two meters.
 
-> (1) How does abundance and diversity differ between site and transect? (2) Are there different environmental conditions that support specific species? (3) Which environmental factors lead to higher diversity? (4) Where do taxa tend to occur when they are not ubiquitous or rare?
+  - [Every time a plant was found I measured:]{.underline}
 
-## Data Visualization Plans
+    - Depth (m)
 
-1.  What do you want your final visualizations to look like?
+    - Velocity (m/s)
 
-> -   Violin plots with jittered points for abundance and diversity between locations and transects
->
-> -   dodged barchart showing average values of environmental variables with a fill of presence absence for important species to compare
->
-> -   dodged barchart showing changes in diversity or abundance across sites
->
-> -   possibly a table of values from eventual linear model output and random forest modelling output
+    - Substrate size (mm)
 
-2.  What do you want to highlight on your final visualizations in order to answer your research questions? How do you plan to do that?
+    - Plant name and number of individuals or range/cover area on the transect
 
-> -   Highlights:
->
->     -   highlight the species with the most abundance and the species with the lowest abundance
->
->     -   highlight the highest abundances between sites
->
->     -   highlight any close relationships between environmental factors and abundance or presence absence
->
-> -   My Plan:
->
->     -   ordering bars, violin plots, etc. from smallest to biggest (using the mean to do this task with violin plots)
->
->     -   use annotations or bright colors to highlight important notes
+  - [Measure at each transect overall:]{.underline}
 
-3.  What is missing from your data or would need to change in your data to create these visualizations?
+    - canopy cover facing north, south, east, and west, \[these numbers were averaged, then multiplied by 4 and divided by product of 17\*4 (freshwater ecology standard)\]
 
-> -   Create a total abundance variable by combining the cover area and number of individuals variable
->
->     -   an estimate of abundance would be 30 cm in width for each individual, so each individual was about 900 cm\^2, so add this to the area counts
->
-> -   Create a presence/absence column for every species at every site
->
-> -   Join environmental variable columns to create separate datasets for presence/absence and abundance
->
-> -   For substrate sizes: change \<2s to 1 (standard to use half of our limit number) and for numbers with a greater than symbol, use the lowest number, e.g.: change \>300, to 300
->
-> -   For the velocity variable: change \<0.1 to 0.05; drop nas
->
-> -   Treat NA depth as 0 depth
->
-> -   Add a new column of rooted and floating by combining the values of emergent and submergent into one value of rooted! 
->
-> -   Join additional environmental data taken from the online EPA StreamCat Database:
->
->     NHDPlus California Data Vector Processing, Unit 18. (2024) \[downloaded file\]. United States Environmental Protection Agency. Available by: <https://www.epa.gov/waterdata/nhdplus-california-data-vector-processing-unit-18> 
->
->     -   I will be reducing this data set to closely follow the Carmel River Watershed region, I am researching, in ArcGIS.
+    - the percentage of the 50-meter transects that were riffle, pool, run, or glide.
 
-## Data Cleaning Plans
+    - water temperature (°C)
+
+    - pH
+
+    - conductivity(ms/cm)
+
+    - TDS (g/L)
+
+    - Dissolved oxygen (mg/L) and Dissolved oxygen (%)
+
+    - Salinity (parts per thousand)
+
+- **Research Questions:**
+
+  - \(1\) How does abundance and diversity differ between site and transect? (2) Are there different environmental conditions that support specific species? (3) Which environmental factors lead to higher diversity? (4) Where do taxa tend to occur when they are not ubiquitous or rare?
+
+## Data Cleaning
+
+*reformat data cleaning section*
 
 1.  Do you need to reformat any variables into different types (e.g. factors, time, dates, strings)? Or remove information from variable values?
 
@@ -124,15 +70,15 @@ execute:
 
 4.  Do you need to create any new variables? What variables? How?
 
-> -   using mutate()
+> - using mutate()
 >
-> -   a stem count variable called calc_stem_abundance_m2 by multiplying number of individuals by 0.09 (accounting for each individual as 900 cm\^2 on average for an estimate)
+> - a stem count variable called calc_stem_abundance_m2 by multiplying number of individuals by 0.09 (accounting for each individual as 900 cm\^2 on average for an estimate)
 >
-> -   a final_abundance variable by using cover area when the value for number_individuals is NA or individuals are greater than or equal to 150 (this may be a less accurate estimate of individuals so using cover area is a better estimate in this case). I also added a clause for using the cover area variable instead of individuals for annual grass if individuals are greater than 5 (as it is difficult to count individual blades of grass)
+> - a final_abundance variable by using cover area when the value for number_individuals is NA or individuals are greater than or equal to 150 (this may be a less accurate estimate of individuals so using cover area is a better estimate in this case). I also added a clause for using the cover area variable instead of individuals for annual grass if individuals are greater than 5 (as it is difficult to count individual blades of grass)
 >
-> -   Add a new variable of rooted_v_floating by combining the values of emergent and submergent into one value of "rooted"
+> - Add a new variable of rooted_v_floating by combining the values of emergent and submergent into one value of "rooted"
 >
-> -   creating a presence/absence column for each species at each site with 1 indicating presence
+> - creating a presence/absence column for each species at each site with 1 indicating presence
 
 5.  Do you need to add new data (join) to your data? What data? How?
 
@@ -154,12 +100,9 @@ execute:
 
 > Yes, I excluded the variables: location_coordinates, date, observers, start_time, end_time, as they weren't important for my analysis.
 
-# Data Cleaning and Data Visualization
+**still need to comment out the rest of my code, I commented out the major important parts so far** **need to add labels to all my code chunks**
 
-**still need to comment out the rest of my code, I commented out the major important parts so far**
-
-**need to add updated graphs and table in here and copy this into the portfolio**
-**need to make correlogram better later**
+**need to add updated graph and copy this into the portfolio** **need to make correlogram better later**
 
 **update answers to questions**
 
@@ -174,7 +117,6 @@ library(car)
 library(ellipse)
 library(RColorBrewer)
 ```
-
 
 ```{r}
 #| label: reading-in-data
@@ -202,7 +144,6 @@ macrophytes |>
 # select(number_individuals, calc_stem_abundance_m2, cover_area_m_2, aquatic_plant_species, total_abundance)
 ```
 
-### Additional Data Cleaning
 ```{r}
 #| eval: false
 macrophytes_abun <- read_csv("data-raw/macrophytes_clean.csv", col_select = -c(location_coordinates, date, observers, start_time, end_time)) |>
@@ -228,8 +169,8 @@ macrophytes_abun <- read_csv("data-raw/macrophytes_clean.csv", col_select = -c(l
         ))
 ```
 
-### Creating Abundance Dataset
 ```{r}
+#| label: creating-abundance-dataset
 #| eval: false
 
 
@@ -268,10 +209,8 @@ macrophytes_abun |>
  write_csv("data-clean/macrophytes_corr.csv")
 ```
 
-### Creating Presence/Absence Dataset
-
 ```{r}
-#| label: presence-absence
+#| label: presence-absence-dataset-creation
 #| eval: false
 
 presence_absence_factors <- macrophytes_abun |>
@@ -306,10 +245,9 @@ presence_absence_matrix <- macrophytes_abun |>
 
 ```
 
-
-###Calculating Diversity Indices across Sites and Creating a Table
 ```{r}
 #| label: abundance-diversity-indices
+#| eval: false
 
 macrophytes_final_original <- read_csv("data-clean/macrophytes_corr.csv")
 
@@ -317,6 +255,9 @@ new_variables <- read_csv("newvariables_wSites.csv")
 
 macrophytes_final <- macrophytes_final_original |>
   full_join(new_variables, by = c("location_name" = "Location_Name")) #joining GIS variables to abundance data
+
+macrophytes_final[16, 1] <- "Lunularia cruciata" #fixing two individual entries to be the correct names
+macrophytes_final[17, 1] <- "Lunularia cruciata"
 
 #between sites location only, not transect, transect has been included here
 abundance_matrix <- macrophytes_final |>
@@ -367,34 +308,41 @@ final_table <- diversity_indices_results %>% # 'diversity_indices_results' is th
   bind_rows(overall_results)
 ```
 
+#Visualization 1: Abundance of Different Species across Sites
 
-### BarChart Showing change in total abundance across sites and species
 ```{r}
-#| label: abundance-graphics
+#| label: abundance-barchart
+#| height: 5
+#| width: 8
 
 macrophytes_final |>
   select(location_name, aquatic_plant_species, Calc_total_abundance_m2) |>
-  ggplot(aes(x = Calc_total_abundance_m2, fill = aquatic_plant_species, y = fct_reorder(location_name, desc(Calc_total_abundance_m2), .fun = sum))) + 
+  ggplot(aes(x = Calc_total_abundance_m2, fill = aquatic_plant_species, y = fct_relevel(location_name, "By Safeway Redo", "Creek Walk Start", "Schulte's Bridge (redo)", "Garland Ranch", "Lower Garzas (SLP)",  "Rosie's Bridge", "SLP Water Monitoring Site", "Tularcitos", "Cachagua Park"))) + 
   geom_col() + #makes the geometry of the plot bars
   labs(
     #creates the x and y axis labels
-    x = "Total Abundance", 
+    x = expression("Total Abundance " *  (m^2)), 
     y = "Location",
-    fill = "Aquatic Plant Species") +  
-   theme_bw() + #This code got rid of the gray background 
-  scale_fill_viridis_d() +
-  scale_y_discrete(labels = c("Tularcitos" = "Tularcitos Creek", "Schulte's Bridge (redo)" = "CR - Schulte's Bridge", "Garland Ranch" = "CR - Garland Ranch", "By Safeway Redo" = "CR - By Safeway", "CR - Cachagua Park", "Rosie's Bridge" = "CR - Rosie's Bridge", "Lower Garzas (SLP)" = "Garzas Creek", "SLP Water Monitoring Site" = "San Clemente Creek", "Creek Walk Start" = "Potrero Creek"))
+    fill = "Aquatic Plant Species",
+    alt = "Horizontal stacked bar chart showing total abundance in square meters of aquatic plant species across creek locations from upstream to downstream. Locations include CR (Carmel River) - Cachagua Park, Tularcitos Creek, San Clemente Creek, CR - Rosie's Bridge, Garzas Creek, CR - Garland Ranch, CR - Schulte's Bridge, Potrero Creek, and CR - By Safeway. CR - By Safeway has the highest total abundance, followed by Garzas Creek and CR - Schulte's Bridge. A color legend lists 16 aquatic plant species.") +
+  theme_bw() + #This code got rid of the gray background 
+  theme(legend.text = element_text(size = 12), axis.text = element_text(size = 12), axis.title = element_text(size = 16), legend.title = element_text(size = 16)) +
+  scale_fill_viridis_d(option = "mako", begin = 0.25, end = 0.95) + #increasing text size for all of the aspects of the graph
+  scale_y_discrete(labels = c("Tularcitos" = "Tularcitos Creek", "Schulte's Bridge (redo)" = "CR - Schulte's Bridge", "Garland Ranch" = "CR - Garland Ranch", "By Safeway Redo" = "CR - By Safeway", "Cachagua Park" = "CR - Cachagua Park", "Rosie's Bridge" = "CR - Rosie's Bridge", "Lower Garzas (SLP)" = "Garzas Creek", "SLP Water Monitoring Site" = "San Clemente Creek", "Creek Walk Start" = "Potrero Creek"))
 
-ggsave("abundance_bar.png", height = 5, width = 8)
   
 ```
 
-**need to make this better later**
-### Correlogram of important variables against each other
+**need to make this better later** 
+
+#Visualization 2: Correlogram of important variables against each other
+
 ```{r}
 #| label: correlogram-important predictors
+#| height: 5
+#| width: 8
  
-cor_data <- cor(macrophytes_final[,7:22], use = "complete.obs") #specifying cor data
+cor_data <- cor(macrophytes_final[c(8:22, 29:34, 36)], use = "complete.obs") #specifying cor data
  
 # Build a Pannel of 100 colors with Rcolor Brewer
 my_colors <- brewer.pal(5, "Spectral")
@@ -405,7 +353,3 @@ ord <- order(cor_data[1, ])
 cor_data_ord <- cor_data[ord, ord]
 plotcorr(cor_data_ord , col=my_colors[cor_data_ord*50+50] , mar=c(1,1,1,1)  )
 ```
-
-
-
-
