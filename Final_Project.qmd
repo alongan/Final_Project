@@ -72,19 +72,19 @@ My **honors capstone data** will be used for this project. I collected this data
 
 - Changed the substrate and velocity variables to remove "\>" or "\<" symbols so that they can be numeric variables. I did this with mutate().
 - I dealt with missing data. I removed NA data from the velocity variable and change NA values in the depth variable to zero using mutate().
-- Creation of new variables:
+- **Creation of new variables:**
   - Stem count variable: called calc_stem_abundance_m2 by multiplying number of individuals by 0.09 (accounting for each individual as 900 cm\^2 on average for an estimate)
   - Final Abundance variable: Combining the stem count variable and cover area. I used cover area when the value for the number of individuals is NA or individuals are greater than or equal to 150 (this may be a less accurate estimate of individuals so using cover area is a better estimate in this case). I also added a clause for using the cover area variable instead of individuals for annual grass if individuals are greater than 5 (as it is difficult to count individual blades of grass).
   - Rooted versus floating variable: by combining the values of emergent and submergent into one value of "rooted" and keeping the value of "floating" the same.
   - creating a presence/absence column for each species at each site with 1 indicating presence and 0 indicating absence.
-- Variable Summarization:
+- **Variable Summarization:**
   - I will grouped my data by species, transect location and site. Then, I took the sum of the final_abundance, and calculated the mean for all my environmental variables, for each of the groupings.
   - Created final datasets for presence-absence and abundance data with these summarizations
-- Pivoting:
+- **Pivoting:**
   - I used pivot_wider to create the initial presence/absence matrix and then pivot_longer to add the environmental variables to the new presence/absence dataset.
-- Joining Data:
+- **Joining Data:**
   - Joined additional environmental variables from the StreamCat dataset to my new abundance and presence/absence datasets.
-- Other aspects of your data that needed to be “fixed” in order to make my data visualizations:
+- **Other aspects that needed to be “fixed” in order to make my data visualizations:**
   - used the janitor package to clean my variable names and make it easier to fully clean my data.
   - Excluded the variables: location_coordinates, date, observers, start_time, end_time, as they weren't important for my analysis.
   - DO % as well as the glide variable were removed due to redundancy in other variables as well as limited data.
