@@ -10,7 +10,7 @@ execute:
 
 # Data Description
 
-My **honors capstone data** will be used for this project. I collected this data from the spring of 2025 until the end of fall 2025. I also joined additional variables from the [EPA’s StreamCat dataset](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset) (Hill et al. 2016). Finally, mean runoff (mm), mean elevation (m), watershed area (km2), the percent base stream flow index, mean annual precipitation from 1991-2020 (mm), mean annual temperature from 1991-2020 (C°), and mean percent lithological calcium oxide (CaO) content within each watershed were downloaded from
+My **honors capstone data** will be used for this project. I collected this data from the spring of 2025 until the end of fall 2025. I also joined additional variables from the [EPA’s StreamCat dataset](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset) (Hill et al. 2016) which are variable means for each smaller watershed in the Carmel River Watershed area.
 
 - My collected data has 279 rows and 28 variables, 11 character variables, 15 double variables, and 2 time variables.
 
@@ -48,65 +48,48 @@ My **honors capstone data** will be used for this project. I collected this data
 
     - Salinity (parts per thousand)
 
+- **Downloaded StreamCat Variables:**
+
+  - Mean runoff (mm)
+
+  - Mean elevation (m)
+
+  - Watershed area (km2)
+
+  - Percent base stream flow index
+
+  - Mean annual precipitation from 1991-2020 (mm)
+
+  - Mean annual temperature from 1991-2020 (C°)
+
+  - Mean percent lithological calcium oxide (CaO) content
+
 - **Research Questions:**
 
   - \(1\) How does abundance and diversity differ between site and transect? (2) Are there different environmental conditions that support specific species? (3) Which environmental factors lead to higher diversity? (4) Where do taxa tend to occur when they are not ubiquitous or rare?
 
 # Data Cleaning
 
-*reformat data cleaning section*
-
-1.  Do you need to reformat any variables into different types (e.g. factors, time, dates, strings)? Or remove information from variable values?
-
-> Yes, I changed the substrate and velocity variables to remove "\>" or "\<" symbols so that they can be numeric variables. I did this with mutate().
-
-2.  Do you need to deal with any missing data, especially missing data coded other than NA?
-
-> Yes, I removed NA data from the velocity variable and change NA values in the depth variable to zero. There is not any missing data that is not coded as NA. I did this with mutate().
-
-3.  Do you need to filter your data? How?
-
-> No, I don't need to do any filtering.
-
-4.  Do you need to create any new variables? What variables? How?
-
-> - using mutate()
->
-> - a stem count variable called calc_stem_abundance_m2 by multiplying number of individuals by 0.09 (accounting for each individual as 900 cm\^2 on average for an estimate)
->
-> - a final_abundance variable by using cover area when the value for number_individuals is NA or individuals are greater than or equal to 150 (this may be a less accurate estimate of individuals so using cover area is a better estimate in this case). I also added a clause for using the cover area variable instead of individuals for annual grass if individuals are greater than 5 (as it is difficult to count individual blades of grass)
->
-> - Add a new variable of rooted_v_floating by combining the values of emergent and submergent into one value of "rooted"
->
-> - creating a presence/absence column for each species at each site with 1 indicating presence
-
-5.  Do you need to add new data (join) to your data? What data? How?
-
-> Yes, I need to join additional environmental variables from the StreamCat dataset to my new abundance and presence/absence datasets. I will most likely use a left_join as I want to keep everything in the abundance and presence/absence datasets and only keep the data that matches from the StreamCat dataset. Greater understanding of how this will be accomplished will be known once I explore the StreamCat dataset further and determine exactly what needs to be done to join the datasets.
-
-6.  Do you need pivot your data in any way? Why? How?
-
-> Yes, I needed to pivot_wider to create the initial presence/absence matrix and then pivot_longer to add the environmental variables to the new presence/absence dataset.
-
-7.  Do you need to summarize any of the variables? Which ones? How?
-
-> Yes. I will be grouping my data by species, transect location and site. Then, I need to take the sum of the final_abundance, and calculate the mean for all my environmental variables, for each of the groupings.
-
-8.  What other aspects of your data need to be “fixed” in order to make your data visualizations?
-
-> I also used the janitor package to clean my variable names and make it easier to fully clean my data.
-
-9.  Are there any variables you can exclude from your data?
-
-> Yes, I excluded the variables: location_coordinates, date, observers, start_time, end_time, as they weren't important for my analysis.
-
-**need to make correlogram better later**
-
-**commented out all code; need to add this to the portfolio**
-
-**update answers to questions in data cleaning**
-
-**add descriptions under visualizations, alt text, and captions**
+- Changed the substrate and velocity variables to remove "\>" or "\<" symbols so that they can be numeric variables. I did this with mutate().
+- I dealt with missing data. I removed NA data from the velocity variable and change NA values in the depth variable to zero using mutate().
+- Creation of new variables:
+  - Stem count variable: called calc_stem_abundance_m2 by multiplying number of individuals by 0.09 (accounting for each individual as 900 cm\^2 on average for an estimate)
+  - Final Abundance variable: Combining the stem count variable and cover area. I used cover area when the value for the number of individuals is NA or individuals are greater than or equal to 150 (this may be a less accurate estimate of individuals so using cover area is a better estimate in this case). I also added a clause for using the cover area variable instead of individuals for annual grass if individuals are greater than 5 (as it is difficult to count individual blades of grass).
+  - Rooted versus floating variable: by combining the values of emergent and submergent into one value of "rooted" and keeping the value of "floating" the same.
+  - creating a presence/absence column for each species at each site with 1 indicating presence and 0 indicating absence.
+- Variable Summarization:
+  - I will grouped my data by species, transect location and site. Then, I took the sum of the final_abundance, and calculated the mean for all my environmental variables, for each of the groupings.
+  - Created final datasets for presence-absence and abundance data with these summarizations
+- Pivoting:
+  - I used pivot_wider to create the initial presence/absence matrix and then pivot_longer to add the environmental variables to the new presence/absence dataset.
+- Joining Data:
+  - Joined additional environmental variables from the StreamCat dataset to my new abundance and presence/absence datasets.
+- Other aspects of your data that needed to be “fixed” in order to make my data visualizations:
+  - used the janitor package to clean my variable names and make it easier to fully clean my data.
+  - Excluded the variables: location_coordinates, date, observers, start_time, end_time, as they weren't important for my analysis.
+  - DO % as well as the glide variable were removed due to redundancy in other variables as well as limited data.
+  - Salinity and TDS were also removed as they are derivative calculations of conductivity which was kept.
+  - Mean annual air temperature was removed as well since it doesn't change much over the years and the field water temperature measurement is a better metric for aquatic plants.
 
 ```{r}
 #| label: setup
@@ -322,7 +305,7 @@ macrophytes_final <- macrophytes_final |>
 ```{r}
 #| label: abundance-barchart
 #| echo: false
-#| fig-cap: "This is a caption for the first visualization"
+#| fig-cap: "**Figure 1.** Bar chart showing species abundance at each site."
 #| fig-alt: "Horizontal stacked bar chart showing total abundance in square meters of aquatic plant species across creek locations from upstream to downstream. Locations include CR (Carmel River) - Cachagua Park, Tularcitos Creek, San Clemente Creek, CR - Rosie's Bridge, Garzas Creek, CR - Garland Ranch, CR - Schulte's Bridge, Potrero Creek, and CR - By Safeway. CR - By Safeway has the highest total abundance, followed by Garzas Creek and CR - Schulte's Bridge. A color legend lists 16 aquatic plant species."
 #| fig-height: 5
 #| fig-width: 8
@@ -344,16 +327,14 @@ macrophytes_final |>
   
 ```
 
-**need to make this better later**
-
 # Visualization 2: Correlogram of important variables against each other
 
 ```{r}
 #| label: correlogram-important predictors
 #| echo: false
-#| fig-cap: "This is a caption for the first visualization"
-#| fig-alt: "add alt text"
-#| fig-height: 5
+#| fig-cap: "**Figure 2.** Correlogram of important environmental predictors to understand strength of collinearity between variables."
+#| fig-alt: "The correlogram has the variables: canopy cover, temperature, pH, conductivity, Dissolved oxygen, riffle percent, pool percent, run percent, depth, substrate size, velocity, base stream flow index, elevation calcium oxide content, runoff, precipitation, watershed area. Each variable is plotted against itself and every other variables with ovals showing the strength and direction. Narrower ovals are stronger while wider ovals are less strong and directional relationship are shown with slope and color. Darker blue color shows positive relationships while lighter blue-green shows negative color. Most relationships appear to be not very strong or have a negative relationship with another variable."
+#| fig-height: 8
 #| fig-width: 8
  
 cor_data <- cor(macrophytes_final[c(8:18, 22:27)], use = "complete.obs") #specifying correlogram data
@@ -391,7 +372,5 @@ ord <- order(cor_data[1, ])
 cor_data_ord <- cor_data[ord, ord]
 
 cor_data_ord |>
-  plotcorr(col=my_colors[cor_data_ord*50+50] , mar=c(1,1,1,1)) #plots the correlogram
+  plotcorr(col=my_colors[cor_data_ord*50+50] , mar=c(1,1,1,1), asp = 1) #plots the correlogram with 1 to 1 aspect
 ```
-
-DO % as well as the glide variable were removed due to redundancy in other variables as well as limited data. Salinity and TDS were also removed as they are derivative calculations of conductivity which was kept. Air temperature was removed as well since it doesn't change much over the years and water temperature is a better metric for aquatic plants. **add to data cleaning section**
